@@ -11,4 +11,8 @@ export class AppController {
   getProfile(@Request() req) {
     return req.body;
   }
+  @Post('login')
+  async login(@Request() req) {
+    return this.authService.validateUser(req.body.email, req.body.password)
+  }
 }

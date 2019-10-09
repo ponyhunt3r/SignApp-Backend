@@ -3,7 +3,6 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto'
 import { User } from './interfaces/user.interface'
 var bcrypt = require('bcryptjs');
-//import { bcrypt } from 'bcryptjs';
 export type User = any;
 
 @Injectable()
@@ -12,45 +11,30 @@ export class UsersService {
 
   constructor(
       @Inject('USER_MODEL') private readonly userModel: Model<User>
-  ) {
-    this.users = [
-      {
-        email: 'john',
-        password: 'changeme',
-      },
-      {
-        email: 'chris',
-        password: 'secret',
-      },
-      {
-        email: 'maria',
-        password: 'guess',
-      },
-    ];
-  }
+  ) {}
 
   async findOne(email: string): Promise<User | undefined> {
-    return this.users.find(user => user.email === email);
+    const query = { email: email}
+    return this.userModel.find(query);
   }
   create(createUserDto: CreateUserDto): any {
-    const query = { email: createUserDto }
+    const query = { email: createUserDto.email }
     this.userModel.find(query, (err, res)=> {
+    const self = this
 		if(!err && res.length === 0) {
-			bcrypt.genSalt(10, function(err, salt) {
+			bcrypt.genSalt(10, function(err2, salt) {
                 bcrypt.hash(createUserDto.password, salt,
                     function(error, hash) {
-					createUserDto.password = hash;
-                    //createUserDto.save();')
-                    const createdUser = new this.userModel(createUserDto);
-                    return createdUser.save();
-				});
+					            createUserDto.password = hash;
+                      const createdUser = new self.userModel(createUserDto);
+                      return createdUser.save();
+        });
+        if (err2) throw err
 			});
 		} else {
-			throw err
+			return {status: '302 duplicated'}
 		}
 	})
-    // const createdUser = new this.userModel(createUserDto);
-    // return createdUser.save();
   }
   async findAll(): Promise<User[]> {
     return await this.userModel.find().exec();
