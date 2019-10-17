@@ -17,7 +17,7 @@ export class UsersService {
     const query = { email: email}
     return this.userModel.find(query);
   }
-  create(createUserDto: CreateUserDto): any {
+  create(createUserDto: CreateUserDto): any {  
     const query = { email: createUserDto.email }
     this.userModel.find(query, (err, res)=> {
     const self = this
@@ -40,4 +40,4 @@ export class UsersService {
     return await this.userModel.find().exec();
   }
 
-}
+} 

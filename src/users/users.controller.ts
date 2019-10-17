@@ -22,7 +22,6 @@ export class UsersController {
       @Get(':id')
       async findOne(@Param() params): Promise<boolean> {
         const user: User =  await this.usersService.findOne(params.id)
-        console.log('user', user)
         if (isEmpty(user)) {
           return true
         } else {
